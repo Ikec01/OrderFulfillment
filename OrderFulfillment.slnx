@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/OrderFulfillment.Api/OrderFulfillment.Api.csproj" />
+    <Project Path="src/OrderFulfillment.Application/OrderFulfillment.Application.csproj" />
+    <Project Path="src/OrderFulfillment.Domain/OrderFulfillment.Domain.csproj" />
+    <Project Path="src/OrderFulfillment.Infrastructure/OrderFulfillment.Infrastructure.csproj" />
+    <Project Path="src/OrderFulfillment.Worker/OrderFulfillment.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/OrderFulfillment.Application.UnitTests/OrderFulfillment.Application.UnitTests.csproj" />
+    <Project Path="tests/OrderFulfillment.Domain.UnitTests/OrderFulfillment.Domain.UnitTests.csproj" />
+    <Project Path="tests/OrderFulfillment.IntegrationTests/OrderFulfillment.IntegrationTests.csproj" />
+  </Folder>
+</Solution>
