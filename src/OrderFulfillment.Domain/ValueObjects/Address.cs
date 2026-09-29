@@ -8,10 +8,10 @@ namespace OrderFulfillment.Domain.ValueObjects
 {
     public sealed class Address : ValueObject
     {
-        private const int MaxStreetLenght = 200;
-        private const int MaxCityLenght = 100;
-        private const int MaxPostalCodeLenght = 20;
-        private const int MaxCountryLenght = 100;
+        public const int MaxStreetLenght = 200;
+        public const int MaxCityLength = 100;
+        public const int MaxPostalCodeLength = 20;
+        public const int MaxCountryLength = 100;
 
         private Address(string street, string city, string postalCode, string country)
         {
@@ -29,9 +29,9 @@ namespace OrderFulfillment.Domain.ValueObjects
         public static Address Create(string street, string city, string postalCode, string country)
         {
             var normalizedStreet = Normailze(street, "Ulica", MaxStreetLenght);
-            var normalizedCity = Normailze(city, "Grad", MaxCityLenght);
-            var normalizedPostalCode = Normailze(postalCode, "Postanski broj", MaxPostalCodeLenght);
-            var normalizedCountry = Normailze(country, "Drzava", MaxCountryLenght);
+            var normalizedCity = Normailze(city, "Grad", MaxCityLength);
+            var normalizedPostalCode = Normailze(postalCode, "Postanski broj", MaxPostalCodeLength);
+            var normalizedCountry = Normailze(country, "Drzava", MaxCountryLength);
 
             return new Address(normalizedStreet, normalizedCity, normalizedPostalCode, normalizedCountry);
         }

@@ -10,7 +10,7 @@ namespace OrderFulfillment.Domain.Orders
 {
     public sealed class OrderItem : Entity<OrderItemId>
     {
-        public const int MaxProductNameLenght = 200;
+        public const int MaxProductNameLength = 200;
         public const int MaxQuantity = 1000;
 
         private OrderItem(
@@ -56,10 +56,10 @@ namespace OrderFulfillment.Domain.Orders
 
             var normalizedName = productName.Trim();
 
-            if(normalizedName.Length > MaxProductNameLenght)
+            if(normalizedName.Length > MaxProductNameLength)
             {
                 throw new DomainException(
-                    $"Naziv proizcoda ne sme biti duzi od {MaxProductNameLenght} karaktera.");
+                    $"Naziv proizcoda ne sme biti duzi od {MaxProductNameLength} karaktera.");
             }
             EnsureValidQuantity(quantity);
 
