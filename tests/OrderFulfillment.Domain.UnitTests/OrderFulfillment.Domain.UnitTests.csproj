@@ -23,8 +23,4 @@
     <ProjectReference Include="..\..\src\OrderFulfillment.Domain\OrderFulfillment.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ValueObjects\" />
-  </ItemGroup>
-
 </Project>
