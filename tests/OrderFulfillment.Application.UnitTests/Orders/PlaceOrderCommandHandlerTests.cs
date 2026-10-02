@@ -4,6 +4,7 @@ using OrderFulfillment.Domain.Common;
 using OrderFulfillment.Domain.Orders;
 using OrderFulfillment.Domain.Orders.Events;
 using OrderFulfillment.Domain.ValueObjects;
+using OrderFulfillment.Application.UnitTests.Fakes;
 using Xunit;
 
 namespace OrderFulfillment.Application.UnitTests.Orders;
@@ -80,30 +81,7 @@ public sealed class PlaceOrderCommandHandlerTests
             ShippingAddress: new AddressDto("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
             Items: [new PlaceOrderItemDto(Guid.NewGuid(), "Laptop stand", 10m, 2)]);
 
-    private sealed class FakeOrderRepository : IOrderRepository
-    {
-        public List<Order> Orders { get; } = [];
+    
 
-        public Task<Order?> GetByIdAsync(OrderId id, CancellationToken cancellationToken = default) =>
-            Task.FromResult(Orders.Find(order => order.Id == id));
-
-        public Task AddAsync(Order order, CancellationToken cancellationToken = default)
-        {
-            Orders.Add(order);
-
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed class FakeUnitOfWork : IUnitOfWork
-    {
-        public int SaveChangesCallCount { get; private set; }
-
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            SaveChangesCallCount++;
-
-            return Task.FromResult(1);
-        }
-    }
+    
 }
