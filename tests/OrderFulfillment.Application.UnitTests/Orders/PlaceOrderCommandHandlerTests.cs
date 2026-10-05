@@ -1,10 +1,9 @@
-﻿using OrderFulfillment.Application.Abstractions;
-using OrderFulfillment.Application.Orders.Commands.PlaceOrder;
+﻿using OrderFulfillment.Application.Orders.Commands.PlaceOrder;
+using OrderFulfillment.Application.UnitTests.Fakes;
 using OrderFulfillment.Domain.Common;
 using OrderFulfillment.Domain.Orders;
 using OrderFulfillment.Domain.Orders.Events;
 using OrderFulfillment.Domain.ValueObjects;
-using OrderFulfillment.Application.UnitTests.Fakes;
 using Xunit;
 
 namespace OrderFulfillment.Application.UnitTests.Orders;
@@ -12,19 +11,19 @@ namespace OrderFulfillment.Application.UnitTests.Orders;
 public sealed class PlaceOrderCommandHandlerTests
 {
     [Fact]
-    public async Task Handle_WithValidCommand_ShouldStorePlacedOrderAndSaveOnce()
+    public async Task Handle_WithValidCommand_ShouldStorePlacedOrderOwnedByCurrentUser()
     {
         var repository = new FakeOrderRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new PlaceOrderCommandHandler(repository, unitOfWork);
-        var command = CreateValidCommand();
+        var currentUser = FakeCurrentUser.Customer();
+        var handler = new PlaceOrderCommandHandler(repository, unitOfWork, currentUser);
 
-        var orderId = await handler.Handle(command, CancellationToken.None);
+        var orderId = await handler.Handle(CreateValidCommand(), CancellationToken.None);
 
         var order = Assert.Single(repository.Orders);
         Assert.Equal(order.Id.Value, orderId);
         Assert.Equal(OrderStatus.Placed, order.Status);
-        Assert.Equal(new CustomerId(command.CustomerId), order.CustomerId);
+        Assert.Equal(new CustomerId(currentUser.UserId!.Value), order.CustomerId);
         Assert.Equal(Money.Create(20m, "EUR"), order.TotalAmount);
         Assert.Equal(1, unitOfWork.SaveChangesCallCount);
     }
@@ -33,7 +32,10 @@ public sealed class PlaceOrderCommandHandlerTests
     public async Task Handle_WithValidCommand_ShouldRaiseOrderPlacedEvent()
     {
         var repository = new FakeOrderRepository();
-        var handler = new PlaceOrderCommandHandler(repository, new FakeUnitOfWork());
+        var handler = new PlaceOrderCommandHandler(
+            repository,
+            new FakeUnitOfWork(),
+            FakeCurrentUser.Customer());
 
         await handler.Handle(CreateValidCommand(), CancellationToken.None);
 
@@ -42,11 +44,25 @@ public sealed class PlaceOrderCommandHandlerTests
     }
 
     [Fact]
+    public async Task Handle_WhenUserIsNotAuthenticated_ShouldThrowAndNotSave()
+    {
+        var repository = new FakeOrderRepository();
+        var unitOfWork = new FakeUnitOfWork();
+        var handler = new PlaceOrderCommandHandler(repository, unitOfWork, FakeCurrentUser.Anonymous());
+
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(
+            () => handler.Handle(CreateValidCommand(), CancellationToken.None));
+
+        Assert.Empty(repository.Orders);
+        Assert.Equal(0, unitOfWork.SaveChangesCallCount);
+    }
+
+    [Fact]
     public async Task Handle_WithoutItems_ShouldThrowDomainExceptionAndNotSave()
     {
         var repository = new FakeOrderRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new PlaceOrderCommandHandler(repository, unitOfWork);
+        var handler = new PlaceOrderCommandHandler(repository, unitOfWork, FakeCurrentUser.Customer());
         var command = CreateValidCommand() with { Items = [] };
 
         await Assert.ThrowsAsync<DomainException>(
@@ -61,7 +77,7 @@ public sealed class PlaceOrderCommandHandlerTests
     {
         var repository = new FakeOrderRepository();
         var unitOfWork = new FakeUnitOfWork();
-        var handler = new PlaceOrderCommandHandler(repository, unitOfWork);
+        var handler = new PlaceOrderCommandHandler(repository, unitOfWork, FakeCurrentUser.Customer());
         var command = CreateValidCommand() with
         {
             ShippingAddress = new AddressDto("   ", "Beograd", "11000", "Srbija"),
@@ -76,12 +92,7 @@ public sealed class PlaceOrderCommandHandlerTests
 
     private static PlaceOrderCommand CreateValidCommand() =>
         new(
-            CustomerId: Guid.NewGuid(),
             Currency: "EUR",
             ShippingAddress: new AddressDto("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
             Items: [new PlaceOrderItemDto(Guid.NewGuid(), "Laptop stand", 10m, 2)]);
-
-    
-
-    
 }

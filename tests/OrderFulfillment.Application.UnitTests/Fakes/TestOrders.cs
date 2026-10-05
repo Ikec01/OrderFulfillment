@@ -5,10 +5,10 @@ namespace OrderFulfillment.Application.UnitTests.Fakes;
 
 internal static class TestOrders
 {
-    public static Order CreatePlaced()
+    public static Order CreatePlaced(CustomerId? customerId = null)
     {
         var order = Order.Create(
-            CustomerId.New(),
+            customerId ?? CustomerId.New(),
             Address.Create("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
             "EUR");
         order.AddItem(ProductId.New(), "Laptop stand", Money.Create(10m, "EUR"), 2);
@@ -18,18 +18,18 @@ internal static class TestOrders
         return order;
     }
 
-    public static Order CreatePaid()
+    public static Order CreatePaid(CustomerId? customerId = null)
     {
-        var order = CreatePlaced();
+        var order = CreatePlaced(customerId);
         order.MarkAsPaid(order.TotalAmount);
         order.ClearDomainEvents();
 
         return order;
     }
 
-    public static Order CreateShipped()
+    public static Order CreateShipped(CustomerId? customerId = null)
     {
-        var order = CreatePaid();
+        var order = CreatePaid(customerId);
         order.Ship();
         order.ClearDomainEvents();
 

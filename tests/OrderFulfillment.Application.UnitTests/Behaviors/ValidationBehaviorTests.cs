@@ -58,9 +58,8 @@ public sealed class ValidationBehaviorTests
     }
 
     private static PlaceOrderCommand CreateValidCommand() =>
-        new(
-            CustomerId: Guid.NewGuid(),
-            Currency: "EUR",
-            ShippingAddress: new AddressDto("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
-            Items: [new PlaceOrderItemDto(Guid.NewGuid(), "Laptop stand", 10m, 2)]);
+    new(
+        Currency: "EUR",
+        ShippingAddress: new AddressDto("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
+        Items: [new PlaceOrderItemDto(Guid.NewGuid(), "Laptop stand", 10m, 2)]);
 }

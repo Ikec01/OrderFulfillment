@@ -7,12 +7,16 @@ namespace OrderFulfillment.Application.Orders.Commands.PlaceOrder;
 
 public sealed class PlaceOrderCommandHandler(
     IOrderRepository orderRepository,
-    IUnitOfWork unitOfWork)
+    IUnitOfWork unitOfWork,
+    ICurrentUser currentUser)
     : IRequestHandler<PlaceOrderCommand, Guid>
 {
     public async Task<Guid> Handle(PlaceOrderCommand request, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        var customerId = currentUser.UserId
+            ?? throw new UnauthorizedAccessException("Korisnik nije prijavljen.");
 
         var shippingAddress = Address.Create(
             request.ShippingAddress.Street,
@@ -20,7 +24,7 @@ public sealed class PlaceOrderCommandHandler(
             request.ShippingAddress.PostalCode,
             request.ShippingAddress.Country);
 
-        var order = Order.Create(new CustomerId(request.CustomerId), shippingAddress, request.Currency);
+        var order = Order.Create(new CustomerId(customerId), shippingAddress, request.Currency);
 
         foreach (var item in request.Items)
         {

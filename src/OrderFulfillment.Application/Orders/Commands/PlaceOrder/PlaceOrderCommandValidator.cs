@@ -8,8 +8,6 @@ public sealed class PlaceOrderCommandValidator : AbstractValidator<PlaceOrderCom
 {
     public PlaceOrderCommandValidator()
     {
-        RuleFor(command => command.CustomerId).NotEmpty();
-
         RuleFor(command => command.Currency)
             .NotEmpty()
             .Matches("^[A-Za-z]{3}$")

@@ -16,14 +16,6 @@ public sealed class PlaceOrderCommandValidatorTests
         Assert.True(result.IsValid);
     }
 
-    [Fact]
-    public void Validate_WithEmptyCustomerId_ShouldFail()
-    {
-        var result = _validator.Validate(CreateValidCommand() with { CustomerId = Guid.Empty });
-
-        Assert.False(result.IsValid);
-    }
-
     [Theory]
     [InlineData("")]
     [InlineData("EU")]
@@ -114,7 +106,7 @@ public sealed class PlaceOrderCommandValidatorTests
     {
         var command = CreateValidCommand() with
         {
-            CustomerId = Guid.Empty,
+            Currency = string.Empty,
             Items = [],
         };
 
@@ -125,7 +117,6 @@ public sealed class PlaceOrderCommandValidatorTests
 
     private static PlaceOrderCommand CreateValidCommand() =>
         new(
-            CustomerId: Guid.NewGuid(),
             Currency: "EUR",
             ShippingAddress: new AddressDto("Knez Mihailova 1", "Beograd", "11000", "Srbija"),
             Items: [new PlaceOrderItemDto(Guid.NewGuid(), "Laptop stand", 10m, 2)]);
