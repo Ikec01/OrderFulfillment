@@ -7,14 +7,20 @@ public static class OrderAccessPolicy
 {
     public static bool CanAccess(ICurrentUser currentUser, Order order)
     {
-        ArgumentNullException.ThrowIfNull(currentUser);
         ArgumentNullException.ThrowIfNull(order);
+
+        return CanAccess(currentUser, order.CustomerId.Value);
+    }
+
+    public static bool CanAccess(ICurrentUser currentUser, Guid ownerId)
+    {
+        ArgumentNullException.ThrowIfNull(currentUser);
 
         if (currentUser.IsAdministrator)
         {
             return true;
         }
 
-        return currentUser.UserId is { } userId && order.CustomerId.Value == userId;
+        return currentUser.UserId is { } userId && userId == ownerId;
     }
 }
