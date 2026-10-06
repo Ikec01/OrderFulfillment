@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OrderFulfillment.Application\OrderFulfillment.Application.csproj" />
+    <ProjectReference Include="..\OrderFulfillment.Contracts\OrderFulfillment.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

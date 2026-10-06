@@ -7,6 +7,7 @@
   <Folder Name="/src/">
     <Project Path="src/OrderFulfillment.Api/OrderFulfillment.Api.csproj" />
     <Project Path="src/OrderFulfillment.Application/OrderFulfillment.Application.csproj" />
+    <Project Path="src/OrderFulfillment.Contracts/OrderFulfillment.Contracts.csproj" />
     <Project Path="src/OrderFulfillment.Domain/OrderFulfillment.Domain.csproj" />
     <Project Path="src/OrderFulfillment.Infrastructure/OrderFulfillment.Infrastructure.csproj" />
     <Project Path="src/OrderFulfillment.Worker/OrderFulfillment.Worker.csproj" />

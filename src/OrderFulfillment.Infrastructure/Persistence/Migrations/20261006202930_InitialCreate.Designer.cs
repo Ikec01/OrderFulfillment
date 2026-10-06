@@ -12,8 +12,8 @@ using OrderFulfillment.Infrastructure.Persistence;
 namespace OrderFulfillment.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(OrderFulfillmentDbContext))]
-    [Migration("20261006195347_AddOutbox")]
-    partial class AddOutbox
+    [Migration("20261006202930_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,6 +81,42 @@ namespace OrderFulfillment.Infrastructure.Persistence.Migrations
                     b.HasIndex("OrderId");
 
                     b.ToTable("order_items", (string)null);
+                });
+
+            modelBuilder.Entity("OrderFulfillment.Infrastructure.Persistence.Outbox.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OccurredOnUtc")
+                        .HasDatabaseName("ix_outbox_messages_unprocessed")
+                        .HasFilter("\"ProcessedOnUtc\" IS NULL");
+
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("OrderFulfillment.Domain.Orders.Order", b =>

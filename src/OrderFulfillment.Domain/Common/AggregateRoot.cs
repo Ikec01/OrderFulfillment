@@ -1,6 +1,6 @@
 ﻿namespace OrderFulfillment.Domain.Common;
 
-public abstract class AggregateRoot<TId> : Entity<TId>
+public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = [];
@@ -9,8 +9,6 @@ public abstract class AggregateRoot<TId> : Entity<TId>
         : base(id)
     {
     }
-
-    // Potreban EF Core-u za materijalizaciju objekta iz baze.
     protected AggregateRoot()
     {
     }

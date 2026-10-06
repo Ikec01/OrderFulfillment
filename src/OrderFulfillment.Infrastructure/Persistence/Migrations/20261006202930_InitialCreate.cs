@@ -32,6 +32,23 @@ namespace OrderFulfillment.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Type = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    Content = table.Column<string>(type: "jsonb", nullable: false),
+                    OccurredOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProcessedOnUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Attempts = table.Column<int>(type: "integer", nullable: false),
+                    Error = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_outbox_messages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "order_items",
                 columns: table => new
                 {
@@ -63,6 +80,12 @@ namespace OrderFulfillment.Infrastructure.Persistence.Migrations
                 name: "IX_orders_CustomerId",
                 table: "orders",
                 column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_outbox_messages_unprocessed",
+                table: "outbox_messages",
+                column: "OccurredOnUtc",
+                filter: "\"ProcessedOnUtc\" IS NULL");
         }
 
         /// <inheritdoc />
@@ -70,6 +93,9 @@ namespace OrderFulfillment.Infrastructure.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "order_items");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages");
 
             migrationBuilder.DropTable(
                 name: "orders");
