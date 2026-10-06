@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using OrderFulfillment.Application.Abstractions;
 using OrderFulfillment.Infrastructure.Persistence;
+using OrderFulfillment.Infrastructure.Queries;
 
 namespace OrderFulfillment.Infrastructure;
 
@@ -13,9 +15,11 @@ public static class InfrastructureServiceCollectionExtensions
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
         services.AddDbContext<OrderFulfillmentDbContext>(options => options.UseNpgsql(connectionString));
-
         services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<OrderFulfillmentDbContext>());
         services.AddScoped<IOrderRepository, OrderRepository>();
+
+        services.AddSingleton(_ => NpgsqlDataSource.Create(connectionString));
+        services.AddScoped<IOrderReadService, OrderReadService>();
 
         return services;
     }
