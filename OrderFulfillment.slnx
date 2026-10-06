@@ -1,4 +1,9 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="docker/.env" />
+    <File Path="docker/docker-compose.yml" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/OrderFulfillment.Api/OrderFulfillment.Api.csproj" />
     <Project Path="src/OrderFulfillment.Application/OrderFulfillment.Application.csproj" />
