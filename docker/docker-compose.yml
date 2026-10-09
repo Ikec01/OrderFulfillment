@@ -17,5 +17,24 @@ services:
       timeout: 3s
       retries: 10
 
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: orderfulfillment-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: orderfulfillment
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 volumes:
   postgres-data:
+  rabbitmq-data:
